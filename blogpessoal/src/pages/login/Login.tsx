@@ -1,24 +1,46 @@
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Login.css';
-import { FormEvent, useContext } from 'react';
+import { RotatingLines } from 'react-loader-spinner';
+
 import { AuthContext } from '../../assets/contexts/AuthContext';
+import UsuarioLogin from '../../models/UsuarioLogin';
+
+
+import './Login.css';
 
 function Login() {
 
-    const { nome, trocarNome } = useContext(AuthContext)
-
     const navigate = useNavigate()
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        navigate('/home')
+    const { usuario, handleLogin, isLoading } = useContext(AuthContext);
+
+    const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>(
+        {} as UsuarioLogin
+    );
+
+    useEffect(() => {
+        if (usuario.token !== '') {
+            navigate('/home')
+        }
+    }, [usuario])
+
+    function atualizarEstado(e: ChangeEvent<HTMLInputElement>) {
+        setUsuarioLogin({
+            ...usuarioLogin,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    function login(e: ChangeEvent<HTMLFormElement>) {
+        e.preventDefault()
+        handleLogin(usuarioLogin)
     }
 
     return (
         <>
             <div className='grid grid-cols-1 lg:grid-cols-2 h-screen place-items-center font-bold' >
                 <form className='flex justify-center items-center flex-col w-1/2 gap-4' 
-                onSubmit={handleSubmit}>
+                onSubmit={login}>
                     <h2 className='text-slate-900 text-5x1' >Entrar</h2>
                     <div className='flex flex-col w-full'>
                         <label htmlFor='usuario'>Usuário</label>
@@ -28,8 +50,8 @@ function Login() {
                             name='usuario'
                             placeholder='Usuario'
                             className='border-2 border-slate-700 rounded p-2'
-                            value={nome}
-                            onChange={(event) => trocarNome(event.target.value)}
+                            value={usuarioLogin.usuario}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
                         />
                     </div>
                     <div className='flex flex-col w-full' >
@@ -40,12 +62,21 @@ function Login() {
                             name='senha'
                             placeholder='Senha'
                             className='border-2 border-slate-700 rounded p-2'
+                            value={usuarioLogin.senha}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) => atualizarEstado(e)}
                         />
                     </div>
                     <button
                         type='submit'
                         className='rounded bg-indigo-400 flex justify-center hover:bg-indigo-900 text-white w-1/2 py-2' >
-                        <span>Entrar</span>
+                        {isLoading ? <RotatingLines
+                            strokeColor="white"
+                            strokeWidth="5"
+                            animationDuration="0.75"
+                            width="24"
+                            visible={true}
+                        /> :
+                        <span>Entrar</span>}
                     </button>
 
                     <hr className='border-slate-800 w-full' />
@@ -57,7 +88,7 @@ function Login() {
                         </Link>
                     </p>
                 </form>
-                <div className='FundoLogin hidden lg:block'></div>
+                <div className='fundoLogin hidden lg:block'></div>
             </div>
         </>
     );
