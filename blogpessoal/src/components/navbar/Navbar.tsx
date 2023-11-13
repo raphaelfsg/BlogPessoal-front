@@ -14,6 +14,10 @@ function Navbar() {
         navigate('/login')
     }
 
+    function cadastrartema() {
+        navigate('/temas')
+    }
+
 
     return (
         <>
@@ -22,9 +26,10 @@ function Navbar() {
                     <Link to='/home' className="text-2xl font-bold">Blog Pessoal</Link>
 
                     <div className="flex gap-4 " >
+                        <Link to='/home' className="hover:underline">Home</Link>
                         <button>Postagens</button>
-                        <button>Temas</button>
-                        <button>Cadastrar tema</button>
+                        <Link to='/temas' className="hover:underline">Temas</Link>
+                        <Link to='/cadastroTema' className="hover:underline">Cadastrar Tema</Link>
                         <button>Perfil</button>
                         <Link to='' onClick={logout} className="hover:underline">Sair</Link>
                     </div>
